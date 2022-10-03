@@ -145,6 +145,7 @@ jobs:
       - run:
           name: Add ec2 instance ip to ansible inventory
           command: |
+            yum install -y tar gzip curl
             cd .circleci/ansible
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -210,8 +211,6 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
@@ -226,7 +225,6 @@ workflows:
           requires:
             - test-backend
             - test-frontend
-            - scan-backend
             - scan-frontend
             - configure-infrastructure
           filters:
