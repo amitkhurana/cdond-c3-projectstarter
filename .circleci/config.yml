@@ -155,12 +155,7 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> inventory
-
-            aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> inventory.txt              
+              --output text >> /root/project/.circleci/ansible/inventory.txt              
       - persist_to_workspace:
           root: ~/
           paths:
@@ -229,7 +224,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/upoqt7n3/BACKEND_IP)
+            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/upoqt7n3/BACKEND_IP)
             export API_URL="http://$BACKEND_IP:3030"
             echo "${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -293,7 +288,7 @@ jobs:
           name: Get backend url and execute smoke test
           command: |
             # Fetch and prepare the BACKEND_IP env var
-            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/upoqt7n3/BACKEND_IP)
+            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/upoqt7n3/BACKEND_IP)
             export API_URL="http://$BACKEND_IP:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
