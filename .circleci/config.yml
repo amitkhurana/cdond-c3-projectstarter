@@ -8,7 +8,8 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build-cache]
+          keys:
+            - v1-frontend-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Build front-end
           command: |
@@ -17,7 +18,7 @@ jobs:
             npm run build
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-build-cache
+          key: v1-frontend-{{ .Branch }}-{{ .Revision }}
 
   build-backend:
     docker:
@@ -25,7 +26,8 @@ jobs:
     steps:
       - checkout    
       - restore_cache:
-          keys: [backend-build-cache]      
+          keys:
+            - v1-backend-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Back-end build
           command: |
@@ -34,7 +36,7 @@ jobs:
              npm run build
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-build-cache
+          key: v1-backend-{{ .Branch }}-{{ .Revision }}
 
 
 workflows:
