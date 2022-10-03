@@ -134,7 +134,6 @@ jobs:
               --tags project=udacity \
               --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-              exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -143,7 +142,6 @@ jobs:
               --tags project=udacity \
               --stack-name "udacity-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-              exit 1
       - run:
           name: Add ec2 instance ip to ansible inventory
           command: |
@@ -152,7 +150,6 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text >> inventory
-            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
