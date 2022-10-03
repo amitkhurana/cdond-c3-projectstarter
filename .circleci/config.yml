@@ -155,7 +155,30 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure      
-      
+
+  configure-infrastructure:
+    docker:
+      - image: python:3.9.0-alpine
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["94:7a:6d:17:24:0f:f9:31:28:65:e5:cd:cd:43:d6:9d"]
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          command: |
+            yum install -y tar gzip curl
+            sudo apt-get update && sudo apt-get install -yy les
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Configure server
+          command: |
+            cd ./.circleci/ansible
+            ansible-playbook -i inventory configure-server.yaml
+      # Here's where you will add some code to rollback on failure
 
 workflows:
   default:
@@ -175,3 +198,6 @@ workflows:
             branches:
               only:
                 - master
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
