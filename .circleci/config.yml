@@ -133,8 +133,12 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=udacity \
               --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/upoqt7n3/BACKEND_URL/http://$BACKEND_IP:3030 -d ""
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+            BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text)
+            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/upoqt7n3/BACKEND_IP/$BACKEND_IP -d ""
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -225,17 +229,9 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> .circleci/ansible/inventory.txt 
-            export BACKEND_IP=$(aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text)
-            #export API_URL="http://${BACKEND_IP}:3030"
-            export API_URL=$(curl https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/upoqt7n3/BACKEND_URL)
-            echo "API_URL = ${API_URL}"
+            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/upoqt7n3/BACKEND_IP)
+            export API_URL="http://$BACKEND_IP:3030"
+            echo "${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run:
@@ -297,7 +293,8 @@ jobs:
           name: Get backend url and execute smoke test
           command: |
             # Fetch and prepare the BACKEND_IP env var
-            export API_URL="http://${BACKEND_IP}:3030"
+            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/upoqt7n3/BACKEND_IP)
+            export API_URL="http://$BACKEND_IP:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
