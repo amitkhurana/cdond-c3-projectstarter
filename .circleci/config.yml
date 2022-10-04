@@ -131,21 +131,20 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --tags project=udacity \
+              --tags project=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
             BACKEND_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
-            echo $BACKEND_IP
             curl https://kvdb.io/3BnPwdqbVa9kWadjw1ZpAP/backendip -d "$BACKEND_IP"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=udacity \
+              --tags project=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --stack-name "udacity-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       - run:
