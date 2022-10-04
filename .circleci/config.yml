@@ -384,12 +384,12 @@ workflows:
             branches:
               only:
                 - master            
-      - deploy-frontend:
-          requires:
-            - configure-infrastructure
       - deploy-backend:
           requires:
-            - deploy-frontend       
+            - run-migrations
+      - deploy-frontend:
+          requires:
+            - run-migrations       
       - smoke-test:
           requires:
             - deploy-backend
