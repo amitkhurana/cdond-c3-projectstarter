@@ -113,15 +113,14 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-frontend-{{ .Branch }}-{{ .Revision }}
+      - attach_workspace:
+          at: .      
       - run:
           name: scan frontend code
           command: |
-             cd frontend            
+             cd ./frontend            
              npm install
-             npm audit fix --audit-level=critical --force
+             # npm audit fix --audit-level=critical --force
              npm audit --audit-level=critical
 
 
@@ -130,15 +129,14 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-backend-{{ .Branch }}-{{ .Revision }}
+      - attach_workspace:
+          at: .      
       - run:
           name: scan backend code
           command: |
-             cd backend            
+             cd ./backend            
              npm install
-             npm audit fix --audit-level=critical --force
+             # npm audit fix --audit-level=critical --force
              npm audit --audit-level=critical
 
   deploy-infrastructure:
@@ -215,6 +213,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - attach_workspace:
+          at: .      
       - run:
           name: Run migrations
           command: |
@@ -227,7 +227,7 @@ jobs:
       - run:
           name: Send migration results to kvdb
           command: |
-            cd backend          
+            cd ./backend          
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl https://kvdb.io/3BnPwdqbVa9kWadjw1ZpAP/migration${CIRCLE_WORKFLOW_ID:0:7} -d "1"
@@ -379,6 +379,8 @@ workflows:
           requires:
             - test-backend
             - test-frontend
+            - scan-backend
+            - scan-frontend
             - configure-infrastructure
           filters:
             branches:
