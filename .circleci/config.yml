@@ -21,7 +21,7 @@ commands:
             aws cloudformation delete-stack --stack-name udacity-frontend-<< parameters.id >>
           when: << parameters.when >>
           
-  revert-migrations:
+  revert_migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       when:
@@ -375,7 +375,6 @@ workflows:
           requires:
             - test-backend
             - test-frontend
-            - scan-frontend
             - configure-infrastructure
           filters:
             branches:
