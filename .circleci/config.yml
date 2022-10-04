@@ -365,9 +365,9 @@ workflows:
           requires: [build-backend]
       - test-frontend:
           requires: [build-frontend]
-      - scan-backend:
-          requires:
-            - build-backend
+#      - scan-backend:
+#          requires:
+#            - build-backend
       - scan-frontend:
           requires:
             - build-frontend
@@ -383,7 +383,7 @@ workflows:
           requires:
             - test-backend
             - test-frontend
-            - scan-backend
+#            - scan-backend
             - scan-frontend
             - configure-infrastructure
           filters:
