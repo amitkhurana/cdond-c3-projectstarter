@@ -138,7 +138,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
-            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/huw6s1d9/BACKEND_IP/$BACKEND_IP -d ""
+            curl https://kvdb.io/N7cmQg1DwZbADh2Hu3NncF/backendip -d "$BACKEND_IP"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -224,7 +224,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/huw6s1d9/BACKEND_IP)
+            export BACKEND_IP=$(curl https://kvdb.io/N7cmQg1DwZbADh2Hu3NncF/backendip)
             export API_URL="http://$BACKEND_IP:3030"
             echo "${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -288,7 +288,7 @@ jobs:
           name: Get backend url and execute smoke test
           command: |
             # Fetch and prepare the BACKEND_IP env var
-            export BACKEND_IP=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/huw6s1d9/BACKEND_IP)
+            export BACKEND_IP=$(curl https://kvdb.io/N7cmQg1DwZbADh2Hu3NncF/backendip)
             export API_URL="http://$BACKEND_IP:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
