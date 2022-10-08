@@ -227,6 +227,7 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install          
             cd backend
+            npm cache clean
             npm install
             npm audit fix --force
             npm run migrations > migrations_dump.txt
