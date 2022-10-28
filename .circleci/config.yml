@@ -338,8 +338,7 @@ jobs:
             export BACKEND_IP=$(curl -k https://kvdb.io/3BnPwdqbVa9kWadjw1ZpAP/backendip)
             export API_URL="http://$BACKEND_IP:3030"
             echo "${API_URL}"
-            curl -ks "${API_URL}/api/status"
-            if curl -s "${API_URL}/api/status" | grep "ok"
+            if curl --retry 10 --retry-delay 5 -s "${API_URL}/api/status" | grep "ok"
             then
                 return 0
             else
