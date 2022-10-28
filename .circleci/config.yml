@@ -334,7 +334,6 @@ jobs:
       - run:
           name: Get backend url and execute smoke test
           command: |
-            cd ./backend
             # Fetch and prepare the BACKEND_IP env var
             export BACKEND_IP=$(curl -k https://kvdb.io/3BnPwdqbVa9kWadjw1ZpAP/backendip)
             export API_URL="http://$BACKEND_IP:3030"
