@@ -348,7 +348,9 @@ jobs:
             apk add --update npm
             apk add --update curl
             apk add --no-cache tar
-            pip3 install awscli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
       - run:
           name: Install and run npm
           command: |
