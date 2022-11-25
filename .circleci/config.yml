@@ -355,7 +355,7 @@ jobs:
             # your code here
             cd backend
             npm install -g npm@latest
-            npm i
+            npm audit fix --force
             npm run build
             cp package* ./dist
             cd dist
