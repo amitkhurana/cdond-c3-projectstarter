@@ -328,7 +328,7 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: node:14.5.0-alpine
+      - image: node:14.21.1-alpine
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
