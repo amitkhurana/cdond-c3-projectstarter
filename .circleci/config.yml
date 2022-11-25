@@ -328,7 +328,7 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: node:14.21.1-alpine
+      - image: python:3.9.0-alpine
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
@@ -342,27 +342,13 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk add --update ansible
-            apk add --update nodejs
-            apk add --update tar gzip
-            apk add --update npm
-            apk add --update curl
-            apk add --no-cache tar
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            ./aws/install
+            apk add --update ansible curl rsync openssh nodejs npm tar gzip
+            ansible --version
+            pip install awscli
+            aws --version
+
       - run:
-          name: Extract tar
-          command: |
-            # your code here
-            cd backend
-            cp package* ./dist
-            cd dist
-            cd ..
-            tar -czf dist.tar.gz dist
-            
-      - run:
-          name: Deploy backend
+          name: Deploy backend 
           working_directory: ./.circleci/ansible
           command: |
             cat inventory.txt
@@ -376,10 +362,8 @@ jobs:
           
   smoke-test:
     docker:
-      # Lightweight Docker image 
       - image: python:3.7-alpine3.11
     steps:
-      ## Checkout code from git
       - checkout
       - attach_workspace:
           at: .
