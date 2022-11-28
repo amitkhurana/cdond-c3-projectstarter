@@ -414,10 +414,10 @@ jobs:
             echo ${URL} 
             curl -s ${URL} | grep -q "Welcome"
       # Here's where you will add some code to rollback on failure
-#      - destroy_environment:
-#          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-#      - revert_migrations:
-#          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"    
+      - destroy_environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert_migrations:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"    
           
   cloudfront-update:
     docker:
@@ -430,12 +430,13 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
-            yum -y install nodejs
-            yum -y install curl
+            yum install -y tar gzip curl
+            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+            yum install -y nodejs
       - run:
           name: Save workflow ID for further cleanup process
           command: |
+            cd ./.circleci/files
             WorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
