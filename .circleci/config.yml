@@ -511,10 +511,10 @@ workflows:
            requires: [deploy-infrastructure]
       - run-migrations:
            requires: [configure-infrastructure]
-          filters:
-            branches:
-              only:
-                - master           
+           filters:
+             branches:
+               only:
+                 - master
       - deploy-backend:
           requires: [run-migrations]
       - deploy-frontend:
