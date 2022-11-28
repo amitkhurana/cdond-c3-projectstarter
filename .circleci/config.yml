@@ -355,6 +355,9 @@ jobs:
             npm run build
             cp package* ./dist
             cd dist
+            npm i
+            cd ..
+            tar -czf dist.tar.gz dist
 
       - run:
           name: Deploy backend 
