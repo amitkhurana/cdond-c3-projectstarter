@@ -287,6 +287,8 @@ jobs:
   deploy-frontend:
     docker:
       - image: circleci/node:13.8.0
+      - attach_workspace:
+          at: .      
     steps:
       - checkout
       - run:
@@ -314,10 +316,16 @@ jobs:
           command: |
             # your code here
             cd frontend
+            npm install
             npm run build
             #tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      # Here's where you will add some code to rollback on failure
+      
+      
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/dist
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert_migrations:
@@ -335,6 +343,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["46:ca:09:55:2d:72:a1:84:35:d2:96:08:e6:7e:11:06"] # You can get this ID in the section where you registered the SSH Key
+      - attach_workspace:
+          at: .          
       - attach_workspace:
           at: .
       - run:
