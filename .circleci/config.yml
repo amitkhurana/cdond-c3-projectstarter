@@ -348,6 +348,15 @@ jobs:
             aws --version
 
       - run:
+          name: NPM Build
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cp package* ./dist
+            cd dist
+
+      - run:
           name: Deploy backend 
           working_directory: ./.circleci/ansible
           command: |
